@@ -34,7 +34,7 @@ jobs:
         
     ## NEW: Start SonarScanner (Hook into build)
     - name: SonarScanner Begin
-      run: dotnet sonarscanner begin /k:"${{ vars.SONAR_PROJECT_KEY }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ vars.SONAR_HOST_URL }}"
+      run: dotnet sonarscanner begin /k:"vcatest_AssetRipper" /d:sonar.token="96776fa54a595ed6a86cfb00e41cf351b5af5c0e" /d:sonar.host.url="https://sonarcloud.io/"
       
     ## NEW: Build the project (Required for Sonar analysis)
     - name: Build Project
@@ -42,22 +42,20 @@ jobs:
       
     ## NEW: End SonarScanner (Upload analysis to Sonar server)
     - name: SonarScanner End
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Often needed by Sonar for PR decoration
-      run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      run: dotnet sonarscanner end /d:sonar.token="96776fa54a595ed6a86cfb00e41cf351b5af5c0e"
 
-    - name: Embold Analyse
-      run: |
-        curl ${{ vars.EMBOLD_SCANNER_URL }} -o browserstack-codequality-scanner-archive.tar.gz
-        tar xvf browserstack-codequality-scanner-archive.tar.gz
-        echo "Download and extract BrowserStack CQ Scanner done"
-        curl --silent --location --request GET "${{ vars.EMBOLD_URL_CS }}/api/v1/repositories/443663290271da4407b0f6b857494178/scans/config/download" --header "Authorization:Bearer ${{ secrets.EMBOLD_TOKEN_CS}}" -o repository-configuration.json
-        echo "Download repository configuration file done"
-        ./browserstack-codequality-scanner/bin/embold-scanner analyse -u ${{ vars.EMBOLD_URL_CS }} -t ${{ secrets.EMBOLD_TOKEN_CS}} -r 443663290271da4407b0f6b857494178 -b . -d ./embold-data -c ./repository-configuration.json -v
+    # - name: Embold Analyse
+    #   run: |
+    #     curl ${{ vars.EMBOLD_SCANNER_URL }} -o browserstack-codequality-scanner-archive.tar.gz
+    #     tar xvf browserstack-codequality-scanner-archive.tar.gz
+    #     echo "Download and extract BrowserStack CQ Scanner done"
+    #     curl --silent --location --request GET "${{ vars.EMBOLD_URL_CS }}/api/v1/repositories/443663290271da4407b0f6b857494178/scans/config/download" --header "Authorization:Bearer ${{ secrets.EMBOLD_TOKEN_CS}}" -o repository-configuration.json
+    #     echo "Download repository configuration file done"
+    #     ./browserstack-codequality-scanner/bin/embold-scanner analyse -u ${{ vars.EMBOLD_URL_CS }} -t ${{ secrets.EMBOLD_TOKEN_CS}} -r 443663290271da4407b0f6b857494178 -b . -d ./embold-data -c ./repository-configuration.json -v
         
-    - name: Archive logs and binaries
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: parsed_files
-        path: embold-data/**/*.txt
+    # - name: Archive logs and binaries
+    #   if: always()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: parsed_files
+    #     path: embold-data/**/*.txt
