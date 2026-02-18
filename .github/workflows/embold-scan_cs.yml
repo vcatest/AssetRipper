@@ -28,9 +28,11 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
-    ## NEW: Install the SonarScanner .NET global tool
+    ## FIXED: Install the SonarScanner and add it to GITHUB_PATH
     - name: Install SonarScanner
-      run: dotnet tool install --global dotnet-sonarscanner
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
         
     ## NEW: Start SonarScanner (Hook into build)
     - name: SonarScanner Begin
